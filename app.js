@@ -1,129 +1,124 @@
 let box_with_cells1 = document.querySelector('.cells_ship_box1');
 let num_of_cells = 121;
 let letters = 'abcdefghij';
-let nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-let cell_content_1;
+let cell_content_1 = 0;
 
-// for(let i = 0; i < num_of_cells; i++) {
-//   let cell = document.createElement('div');
-//   cell.classList.add('cell');
-//   box_with_cells1.appendChild(cell);
 
-//   if(i > 0 && i < 11) {
-//     cell.textContent = letters[0]
-//   }
-
-//   if(i > 1 && i < 11) {
-//     cell.textContent = letters[1]
-//   }
-
-//   if(i > 2 && i < 11) {
-//     cell.textContent = letters[2]
-//   }
-
-//   if(i > 3 && i < 11) {
-//     cell.textContent = letters[3]
-//   }
-
-//   if(i > 4 && i < 11) {
-//     cell.textContent = letters[4]
-//   }
-
-//   if(i > 5 && i < 11) {
-//     cell.textContent = letters[5]
-//   }
-
-//   if(i > 6 && i < 11) {
-//     cell.textContent = letters[6]
-//   }
-
-//   if(i > 7 && i < 11) {
-//     cell.textContent = letters[7]
-//   }
-
-//   if(i > 8 && i < 11) {
-//     cell.textContent = letters[8]
-//   }
-
-//   if(i > 9 && i < 11) {
-//     cell.textContent = letters[9]
-//   }
-
-//   if(i > 10 && i < 11) {
-//     cell.textContent = letters[10]
-//   }
-// }
+let ships = document.querySelectorAll('.ship');
+let move_made_btn = document.querySelector('.move-made');
+let currentDroppable = null;
+let leftShipCoordinate = 0;
+let topShipCoordinate = 0;
+let sizeOfCell = 50;
 
 for(let i = 0; i < num_of_cells; i++) {
   if(i > 0 && i < 11) {
-    cell_content_1 = letters[0];
-  }
-  if(i > 1 && i < 11) {
-    cell_content_1 = letters[1];
+    cell_content_1 = letters[i-1];
   } 
-  if(i > 2 && i < 11) {
-    cell_content_1 = letters[2];
-  }
-  if(i > 3 && i < 11) {
-    cell_content_1 = letters[3];
-  }
-  if(i > 4 && i < 11) {
-    cell_content_1 = letters[4];
-  }
-  if(i > 5 && i < 11) {
-    cell_content_1 = letters[5];
-  }
-  if(i > 6 && i < 11) {
-    cell_content_1 = letters[6];
-  }
-  if(i > 7 && i < 11) {
-    cell_content_1 = letters[7];
-  }
-  if(i > 8 && i < 11) {
-    cell_content_1 = letters[8];
-  }
-  if(i > 9 && i < 11) {
-    cell_content_1 = letters[9];
-  }
-  if(i > 10 && i < 11) {
-    cell_content_1 = letters[10];
-  }
-  if(i === 0) {
-    cell_content_1 = '';
-  }
-  if(i >= 11) {
-    cell_content_1 = '';
-  }
   
-  if(i === 11) {
-    cell_content_1 = nums[0];
+  if(i % 11 === 0 && i / 11 !== 0) {
+    cell_content_1 = i / 11;
   }
-  if(i === 22) {
-    cell_content_1 = nums[1];
+
+  if(i < 1) {
+    cell_content_1 = "";
   }
-  if(i === 33) {
-    cell_content_1 = nums[2];
-  }
-  if(i === 44) {
-    cell_content_1 = nums[3];
-  }
-  if(i === 55) {
-    cell_content_1 = nums[4];
-  }
-  if(i === 66) {
-    cell_content_1 = nums[5];
-  }
-  if(i === 77) {
-    cell_content_1 = nums[6];
-  }
-  if(i === 88) {
-    cell_content_1 = nums[7];
-  }
-  if(i === 99) {
-    cell_content_1 = nums[8];
-  }
-  if(i === 110) {
-    cell_content_1 = nums[9];
-  }
-  box_with_cells1.insertAdjacentHTML('beforeEnd', `<div class="cell">${cell_content_1}</div>`);
+
+  box_with_cells1.insertAdjacentHTML('beforeEnd', `<div class="cell droppable">${cell_content_1}</div>`);
+  cell_content_1 = "";
 }
+
+for(let ship of ships) {
+
+  ship.onmousedown = function(event) {
+
+  let shiftX = event.clientX - ship.getBoundingClientRect().left;
+  let shiftY = event.clientY - ship.getBoundingClientRect().top;
+
+    ship.style.position = 'absolute';
+    ship.style.zIndex = 1;
+    document.body.appendChild(ship);
+
+    moveAt(event.pageX, event.pageY);
+
+    function moveAt(pageX, pageY) {
+      ship.style.left = pageX - shiftX + 'px';
+      ship.style.top = pageY - shiftY + 'px';
+    }
+
+    function onMouseMove(event) {
+      moveAt(event.pageX, event.pageY);
+
+      ship.hidden = true;
+      let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+      ship.hidden = false;
+
+      if(!elemBelow) return;
+
+      let droppableBelow = elemBelow.closest('.droppable');
+
+      if(currentDroppable != droppableBelow) {
+        if(currentDroppable) {
+          leaveDroppable(currentDroppable);
+        }
+
+        currentDroppable = droppableBelow;
+        if(currentDroppable) {
+          enterDroppable(currentDroppable);
+        }
+      }
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+
+    ship.onmouseup = function() {
+      document.removeEventListener('mousemove', onMouseMove);
+      ship.onmouseup = null;
+    };
+
+    // вирахування координат корабля
+
+    let boardX = box_with_cells1.getBoundingClientRect().left;
+    let boardY = box_with_cells1.getBoundingClientRect().top;
+  
+    function getLeftShipCoordinatesInBoard(boardX, shiftX) {
+      let shipInBoardCoordinate = boardX - shiftX;
+      leftShipCoordinate = Math.floor(shipInBoardCoordinate / sizeOfCell);
+      console.log(leftShipCoordinate);
+    }
+
+    getLeftShipCoordinatesInBoard(boardX, shiftX);
+
+    function getTopShipCoordinatesInBoard(boardY, shiftY) {
+      let shipInBoardCoordinate = boardY - shiftY;
+      topShipCoordinate = Math.floor(shipInBoardCoordinate / sizeOfCell);
+      console.log(topShipCoordinate);
+    }
+    
+    getTopShipCoordinatesInBoard(boardY, shiftY);
+
+
+  }
+
+  function enterDroppable(elem) {
+    if(elem.textContent !== '') {
+      elem.style.background = '';
+    } else {
+      ship.style.display = 'none';
+      box_with_cells1.insertAdjacentHTML('beforeEnd', 
+      `<div class="ship-2 ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`)
+    }
+  }
+
+  function leaveDroppable(elem) {
+    elem.style.background = '';
+  }
+
+  ship.ondragstart = function() {
+    return false;
+  };
+}
+
+// координати борду (відносно сторінки) - координати мишки (відносно сторінки) = координати мишки (відносно борду)
+// якщо координати мишки (відносно борду) > 0 та < 20 (гіпотетичний розмір клітинки), тоді координати мишки мають стати 0.
+// координати мишки (відносно борду) / на розмір одної клітинки і округлюю до цілого меншого. 
