@@ -1,8 +1,16 @@
 let box_with_cells1 = document.querySelector('.cells_ship_box1');
-let num_of_cells = 121;
-let letters = 'abcdefghij';
-let cell_content_1 = 0;
+let num_cell_container = document.querySelector('.num_cell_container');
+let cell_container = document.querySelector('.cell_container');
+let droppable_cell_container = document.querySelector('.droppable_cell_container');
 
+let cellsWithLettersNum = 11;
+let cellsWithNumbersNum = 10;
+let droppableCells = 100;
+
+let letters = 'abcdefghij';
+let cell_content_letters = 0;
+let cell_content_nums = 0;
+let cell_content_droppable = "";
 
 let ships = document.querySelectorAll('.ship');
 let move_made_btn = document.querySelector('.move-made');
@@ -11,21 +19,24 @@ let leftShipCoordinate = 0;
 let topShipCoordinate = 0;
 let sizeOfCell = 50;
 
-for(let i = 0; i < num_of_cells; i++) {
-  if(i > 0 && i < 11) {
-    cell_content_1 = letters[i-1];
-  } 
-  
-  if(i % 11 === 0 && i / 11 !== 0) {
-    cell_content_1 = i / 11;
+for(let i = 0; i < cellsWithLettersNum; i++) {
+  if(i > 0) {
+    cell_content_letters = letters[i - 1];
   }
 
   if(i < 1) {
-    cell_content_1 = "";
+    cell_content_letters = "";
   }
+  cell_container.insertAdjacentHTML('beforeEnd', `<div class="cell">${cell_content_letters}</div>`);
+}
 
-  box_with_cells1.insertAdjacentHTML('beforeEnd', `<div class="cell droppable">${cell_content_1}</div>`);
-  cell_content_1 = "";
+for(let i = 0; i < cellsWithNumbersNum; i++) {
+  cell_content_nums ++;
+  num_cell_container.insertAdjacentHTML('beforeEnd', `<div class="cell">${cell_content_nums}</div>`);
+}
+
+for(let i = 0; i < droppableCells; i++) {
+  droppable_cell_container.insertAdjacentHTML('beforeEnd', `<div class="cell droppable">${cell_content_droppable}</div>`)
 }
 
 for(let ship of ships) {
@@ -65,6 +76,16 @@ for(let ship of ships) {
         currentDroppable = droppableBelow;
         if(currentDroppable) {
           enterDroppable(currentDroppable);
+
+          let boardX = droppable_cell_container.getBoundingClientRect().left;
+          let boardY = droppable_cell_container.getBoundingClientRect().top;
+      
+          function getShipCoordinate(ship_coordinate, board_coordinate, shift) {
+            return (Math.floor((ship_coordinate - board_coordinate - shift) / sizeOfCell) * sizeOfCell) + 'px';
+        }
+        
+          console.log('left', leftShipCoordinate = getShipCoordinate(event.pageX, boardX, shiftX));
+          console.log('top', topShipCoordinate = getShipCoordinate(event.pageY, boardY, shiftY));
         }
       }
     }
@@ -74,39 +95,35 @@ for(let ship of ships) {
     ship.onmouseup = function() {
       document.removeEventListener('mousemove', onMouseMove);
       ship.onmouseup = null;
+      ship.style.display = 'none';
+
+      for(let ship of ships) {
+        if(this.classList.contains('ship-1')) {
+          droppable_cell_container.insertAdjacentHTML('afterbegin', 
+          `<div class="ship-1 ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`)
+        }
+
+        if(this.classList.contains('ship-2')) {
+          droppable_cell_container.insertAdjacentHTML('afterbegin', 
+          `<div class="ship-2 ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`)
+        }
+
+        if(this.classList.contains('ship-3')) {
+          droppable_cell_container.insertAdjacentHTML('afterbegin', 
+          `<div class="ship-3 ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`)
+        }
+
+        if(this.classList.contains('ship-4')) {
+          droppable_cell_container.insertAdjacentHTML('afterbegin', 
+          `<div class="ship-4 ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`)
+        }
+      }
     };
-
-    // вирахування координат корабля
-
-    let boardX = box_with_cells1.getBoundingClientRect().left;
-    let boardY = box_with_cells1.getBoundingClientRect().top;
-  
-    function getLeftShipCoordinatesInBoard(boardX, shiftX) {
-      let shipInBoardCoordinate = boardX - shiftX;
-      leftShipCoordinate = Math.floor(shipInBoardCoordinate / sizeOfCell);
-      console.log(leftShipCoordinate);
-    }
-
-    getLeftShipCoordinatesInBoard(boardX, shiftX);
-
-    function getTopShipCoordinatesInBoard(boardY, shiftY) {
-      let shipInBoardCoordinate = boardY - shiftY;
-      topShipCoordinate = Math.floor(shipInBoardCoordinate / sizeOfCell);
-      console.log(topShipCoordinate);
-    }
-    
-    getTopShipCoordinatesInBoard(boardY, shiftY);
-
-
   }
 
   function enterDroppable(elem) {
     if(elem.textContent !== '') {
       elem.style.background = '';
-    } else {
-      ship.style.display = 'none';
-      box_with_cells1.insertAdjacentHTML('beforeEnd', 
-      `<div class="ship-2 ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`)
     }
   }
 

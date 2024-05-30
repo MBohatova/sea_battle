@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .container {
@@ -14,17 +15,25 @@
 
 .cells_ship_box1 {
   position: relative;
-  width: 610px;
+  width: 551px;
+  height: 551px;
 
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 3px 3px;
+  /* gap: 3px 3px; */
 
   border: 1px solid navy;
   border-radius: 10px;
-  padding: 10px;
+  padding: 0;
+}
+
+.cell_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
 }
 
 .cell {
@@ -44,9 +53,27 @@
   color: navy;
 }
 
+.num_cell_container {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.droppable_cell_container {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  height: 500px;
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .ship-box {
-  height: 220px;
-  width: 530px;
+  height: 250px;
+  width: 560px;
   border: 5px dotted navy;
   border-radius: 10px;
 
