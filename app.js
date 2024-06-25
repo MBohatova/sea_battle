@@ -13,11 +13,17 @@ let cell_content_nums = 0;
 let cell_content_droppable = "";
 
 let ships = document.querySelectorAll('.ship');
+let cells = document.querySelectorAll('.cell');
 let move_made_btn = document.querySelector('.move-made');
 let currentDroppable = null;
 let leftShipCoordinate = 0;
 let topShipCoordinate = 0;
 let sizeOfCell = 50;
+let maxAvailableCellX = null;
+let maxAvailableCellY = null;
+let id_name = "";
+let id_arr = [];
+let elem_id = "";
 
 for(let i = 0; i < cellsWithLettersNum; i++) {
   if(i > 0) {
@@ -36,7 +42,9 @@ for(let i = 0; i < cellsWithNumbersNum; i++) {
 }
 
 for(let i = 0; i < droppableCells; i++) {
-  droppable_cell_container.insertAdjacentHTML('beforeEnd', `<div class="cell droppable">${cell_content_droppable}</div>`)
+  id_name = i + '_cell';
+  id_arr.push(id_name);
+  droppable_cell_container.insertAdjacentHTML('beforeEnd', `<div id="${id_name}" class="cell droppable">${cell_content_droppable}</div>`);
 }
 
 for(let ship of ships) {
@@ -81,10 +89,12 @@ for(let ship of ships) {
           let boardY = droppable_cell_container.getBoundingClientRect().top;
       
           function getShipCoordinate(ship_coordinate, board_coordinate, shift) {
-            return (Math.floor((ship_coordinate - board_coordinate - shift) / sizeOfCell) * sizeOfCell) + 'px';
+            return (Math.floor((ship_coordinate - board_coordinate - shift) / sizeOfCell) * sizeOfCell);
           }
           leftShipCoordinate = getShipCoordinate(event.pageX, boardX, shiftX);
           topShipCoordinate = getShipCoordinate(event.pageY, boardY, shiftY);
+        
+          elem_id = droppableBelow.getAttribute('id');
         }
       }
     }
@@ -94,106 +104,38 @@ for(let ship of ships) {
     ship.onmouseup = function() {
       document.removeEventListener('mousemove', onMouseMove);
       ship.onmouseup = null;
-      ship.style.display = 'none';
+
+      let boardX = droppable_cell_container.getBoundingClientRect().left;
+      let boardY = droppable_cell_container.getBoundingClientRect().top;
+
+      maxAvailableCellX = (cellsWithNumbersNum - (ship.getBoundingClientRect().width / sizeOfCell)) * sizeOfCell;
+
+      if(leftShipCoordinate > maxAvailableCellX) {
+        leftShipCoordinate = maxAvailableCellX;
+      }
 
       if(leftShipCoordinate < 0) {
-        console.log(leftShipCoordinate);
-        return leftShipCoordinate = 0;
+        leftShipCoordinate = 0;
       }
       if(topShipCoordinate < 0) {
-        console.log(topShipCoordinate);
-        return topShipCoordinate = 0;
+        topShipCoordinate = 0;
       }
-      console.log(leftShipCoordinate);
-      console.log(topShipCoordinate);
 
-      droppable_cell_container.insertAdjacentHTML('afterbegin', 
-        `<div class="${this.className}, generated_ship" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`);
-        
-        let generated_ship = document.querySelector('.generated_ship');
+      ship.style.left = leftShipCoordinate + boardX + 'px';
+      ship.style.top = topShipCoordinate + boardY + 'px';
 
-        generated_ship.onmousedown = function(event) {
-        
-          let shiftX = event.clientX - generated_ship.getBoundingClientRect().left;
-          let shiftY = event.clientY - generated_ship.getBoundingClientRect().top; 
-      
-          document.body.append(generated_ship);
-      
-          moveAt(event.pageX, event.pageY);
-      
-          function moveAt(pageX, pageY) {
-            generated_ship.style.left = pageX - shiftX + 'px';
-            generated_ship.style.top = pageY - shiftY + 'px';
-          }
-      
-          function onMouseMove(event) {
-            moveAt(event.pageX, event.pageY);
-
-            generated_ship.hidden = true;
-            let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-            generated_ship.hidden = false;
-
-            if(!elemBelow) return;
-
-            let droppableBelow = elemBelow.closest('.droppable');
-
-            if(currentDroppable != droppableBelow) {
-              if(currentDroppable) {
-                leaveDroppable(currentDroppable);
-              }
-              currentDroppable = droppableBelow;
-              if(currentDroppable) {
-                enterDroppable(currentDroppable);
-
-                let boardX = droppable_cell_container.getBoundingClientRect().left;
-                let boardY = droppable_cell_container.getBoundingClientRect().top;
-      
-                function getShipCoordinate(ship_coordinate, board_coordinate, shift) {
-                  return (Math.floor((ship_coordinate - board_coordinate - shift) / sizeOfCell) * sizeOfCell) + 'px';
-                }
-                leftShipCoordinate = getShipCoordinate(event.pageX, boardX, shiftX);
-                topShipCoordinate = getShipCoordinate(event.pageY, boardY, shiftY);
-
-                // generated_ship.style.left = leftShipCoordinate;
-                // generated_ship.style.top = topShipCoordinate;
-              }
-            }
-          }
-      
-          document.addEventListener('mousemove', onMouseMove);
-
-          generated_ship.onmouseup = function() {
-            document.removeEventListener('mousemove', onMouseMove);
-            generated_ship.onmouseup = null;
-            generated_ship.style.display = 'none';
-
-            if(leftShipCoordinate < 0) {
-              return leftShipCoordinate = 0;
-            }
-            if(topShipCoordinate < 0) {
-              return topShipCoordinate = 0;
-            }
-            console.log(leftShipCoordinate);
-            console.log(topShipCoordinate);
-
-            droppable_cell_container.insertAdjacentHTML('afterbegin', 
-              `<div class="${this.className}, generated_ship_updated_position" style="position: absolute; left: ${leftShipCoordinate}; top: ${topShipCoordinate};"></div>`);
-          }
+      for(let i = 0; i < id_arr.length; i++) {
+        if(id_arr[i] === elem_id) {
+          document.getElementById(id_arr[i + 1]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i - 1]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i + 10]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i - 10]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i - 11]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i - 9]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i + 9]).style.backgroundColor = 'red';
+          document.getElementById(id_arr[i + 11]).style.backgroundColor = 'red';
         }
-
-        function enterDroppable(elem) {
-          if(elem.textContent !== '') {
-            elem.style.background = '';
-          }
-        }
-      
-        function leaveDroppable(elem) {
-          elem.style.background = '';
-        }
-
-        generated_ship.ondragstart = function() {
-          return false;
-        };
+      }
     }
   }
 
