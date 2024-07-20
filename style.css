@@ -13,6 +13,12 @@
   gap: 30px;
 }
 
+.board_container {
+  display: flex;
+  justify-content: space-between;
+  gap: 50px;
+}
+
 .cells_ship_box1 {
   position: relative;
   width: 551px;
@@ -22,7 +28,21 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  /* gap: 3px 3px; */
+
+  border: 1px solid navy;
+  border-radius: 10px;
+  padding: 0;
+}
+
+.cells_ship_box2 {
+  position: relative;
+  width: 551px;
+  height: 551px;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 
   border: 1px solid navy;
   border-radius: 10px;
@@ -30,6 +50,13 @@
 }
 
 .cell_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+}
+
+.cell_container_2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -61,6 +88,14 @@
   flex-direction: column;
 }
 
+.num_cell_container_2 {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .droppable_cell_container {
   position: absolute;
   top: 50px;
@@ -71,9 +106,39 @@
   flex-wrap: wrap;
 }
 
+.droppable_cell_container_2 {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  height: 500px;
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ship-box_container {
+  display: flex;
+  justify-content: space-between;
+  gap: 50px;
+}
+
 .ship-box {
   height: 250px;
-  width: 560px;
+  width: 540px;
+  border: 5px dotted navy;
+  border-radius: 10px;
+
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+
+  padding: 10px;
+  margin-bottom: 7px;
+}
+
+.ship-box_2 {
+  height: 250px;
+  width: 540px;
   border: 5px dotted navy;
   border-radius: 10px;
 
@@ -92,8 +157,8 @@
 }
 
 .ship-1 {
-  height: 52px;
-  width: 52px;
+  height: 50px;
+  width: 50px;
   background-color: #99D4F2;
   border-radius: 10px;
 }
@@ -105,8 +170,8 @@
 }
 
 .ship-2 {
-  height: 52px;
-  width: 104px;
+  height: 50px;
+  width: 100px;
   background-color: #68BAE2;
   border-radius: 10px;
 }
@@ -118,17 +183,22 @@
 }
 
 .ship-3 {
-  height: 52px;
-  width: 156px;
+  height: 50px;
+  width: 150px;
   background-color: #53A0C7;
   border-radius: 10px;
 }
 
 .ship-4 {
-  height: 52px;
-  width: 208px;
+  height: 50px;
+  width: 200px;
   background-color: #3C88AE;
   border-radius: 10px;
+}
+
+.button-box {
+  display: flex;
+  gap: 400px;
 }
 
 .move-made {
@@ -143,4 +213,30 @@
   font-weight: 600;
   font-size: large;
   color: white;
+}
+
+.cover {
+  position: absolute;
+  z-index: 2;
+  height: 500px;
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  background: linear-gradient(#fff,#99D4F2);
+  border-radius: 10px;
+  display: none;
+}
+
+.invalid_cell {
+  border-color: #3C88AE;
+}
+
+.cover_elem {
+  top: 50px;
+  left: 50px;
+}
+
+.cover_elem2 {
+  top: 50px;
+  left: 50px;
 }
